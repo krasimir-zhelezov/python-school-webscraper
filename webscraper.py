@@ -26,21 +26,44 @@ class WebScraper:
         
         # self.driver.execute_script(f"arguments[0].value='{query}';", search_input)
         
-    def __extract_article(self, url: str=None):
-        if (url):
-            self.driver.get(f'{url}')
+    def search_for_math(self, query):
+        self.driver.get(f'https://www.matematika.bg/search.html?q={query}')
         
-        text = ' '.join([p.text for p in self.__find_elements('//main//article//div//p')])
-            
+        link = self.__find_element('//div[contains(@class, \'gsc-expansionArea\')]//div//div//div//div//a').get_attribute('href')
+        
+        self.driver.get(link)        
+        
+        cta_accept_button = self.__find_element('//button[contains(@class, \'fc-button fc-cta-consent fc-primary-button\')]')
+        self.__click_element(cta_accept_button)
+        
+        self.__extract_math_article()
+        
+    def __extract_math_article(self):
+        text = self.__concat_p_tags(self.__find_elements('//article//p'))
+        
         print(text)
         
         return text
         
         
+    def __extract_article(self, url: str=None):
+        if (url):
+            self.driver.get(f'{url}')
+        
+        text = self.__concat_p_tags(self.__find_elements('//main//article//div//p'))
+        
+        return text
+    
+    def __concat_p_tags(self, p_tags: List[WebElement]) -> str:
+        return ' '.join([p.text for p in p_tags])
+        
+        
     def __find_element(self, xpath: str) -> WebElement:
-        elements = WebDriverWait(self.driver, self.timeout_time).until(
+        element = WebDriverWait(self.driver, self.timeout_time).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
+        
+        return element
         
     def __find_elements(self, xpath: str) -> List[WebElement]:
         elements = WebDriverWait(self.driver, self.timeout_time).until(
