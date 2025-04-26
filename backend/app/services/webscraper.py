@@ -16,8 +16,15 @@ class WebScraper:
         options.add_argument("--headless")
         
         self.driver = webdriver.Chrome(options=options)
+        
+    def search(self, category, query):
+        match category:
+            case "bg":
+                return self.__search_for_bg(query)
+            case "math":
+                return self.__search_for_math(query)
     
-    def search_for_bulgarian(self, query):
+    def __search_for_bg(self, query):
         self.driver.get(f'https://kaksepishe.com/?s={query}&type=title')
         url = None
         
@@ -29,7 +36,7 @@ class WebScraper:
             
         return self.__extract_article(url)
         
-    def search_for_math(self, query):
+    def __search_for_math(self, query):
         self.driver.get(f'https://www.matematika.bg/search.html?q={query}')
         
         link = self.__find_element('//div[contains(@class, \'gsc-expansionArea\')]//div//div//div//div//a').get_attribute('href')
