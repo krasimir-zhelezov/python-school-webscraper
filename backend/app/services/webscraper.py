@@ -19,16 +19,15 @@ class WebScraper:
     
     def search_for_bulgarian(self, query):
         self.driver.get(f'https://kaksepishe.com/?s={query}&type=title')
+        url = None
         
         try: 
             links = [link.get_attribute('href') for link in self.__find_elements('//article//header//h2//a')]
-            self.__extract_article(links[0])
+            url = links[-1]
         except TimeoutException:
-            self.__extract_article()
-        
-        # # search_input.send_keys(query)
-        
-        # self.driver.execute_script(f"arguments[0].value='{query}';", search_input)
+            url = None
+            
+        return self.__extract_article(url)
         
     def search_for_math(self, query):
         self.driver.get(f'https://www.matematika.bg/search.html?q={query}')

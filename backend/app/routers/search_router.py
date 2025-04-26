@@ -10,3 +10,10 @@ async def search_for_math(query):
     data = webscraper.search_for_math(query)
     
     return data
+
+@search_router.get("/search/bg/{query}")
+async def search_for_bulgarian(query):
+    webscraper = WebScraper()
+    data = webscraper.search_for_bulgarian(query)
+    
+    return data
